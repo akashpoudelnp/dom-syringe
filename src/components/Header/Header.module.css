@@ -1,0 +1,21 @@
+.header {
+  padding: 16px 20px;
+  background: linear-gradient(135deg, var(--primary) 0%, #7C3AED 100%);
+  color: white;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo i {
+  font-size: 24px;
+}
+
+.logo h1 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
