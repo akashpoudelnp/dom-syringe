@@ -197,15 +197,18 @@ export const useStore = create<AppState>((set, get) => ({
   },
 
   handleSelection: (selection) => {
-    const { currentItem, pendingVariableName } = get()
-    if (!currentItem || !pendingVariableName) return
+    const { currentItem } = get()
+    if (!currentItem) return
+
+    // Use the variableName from the selection
+    const varName = selection.variableName
 
     set({
       currentItem: {
         ...currentItem,
         variables: {
           ...currentItem.variables,
-          [pendingVariableName]: selection.selector,
+          [varName]: selection.selector,
         },
       },
       isPickerActive: false,

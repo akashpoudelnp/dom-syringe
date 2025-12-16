@@ -36,7 +36,7 @@ export function EditorView() {
   // Load variable values from page
   useEffect(() => {
     loadVariableValues()
-  }, [currentItem?.variables])
+  }, [JSON.stringify(currentItem?.variables)])
 
   const loadVariableValues = async () => {
     if (!currentItem) return

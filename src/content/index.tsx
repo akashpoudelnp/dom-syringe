@@ -1,7 +1,25 @@
 // DOM Syringe - Content Script
-import { generateSelector, getDeepText, getElementValue } from '../lib/dom'
-import { STORAGE_KEYS } from '../lib/constants'
-import type { MessageType, LastSelection } from '../lib/types'
+
+// Inline constants to avoid import issues
+const STORAGE_KEYS = {
+  PENDING_PICKER: 'pendingPicker',
+  LAST_SELECTION: 'lastSelection',
+} as const
+
+// Types
+interface LastSelection {
+  variableName: string
+  selector: string
+  text: string
+  tagName: string
+  timestamp: number
+}
+
+interface MessageType {
+  type: string
+  variableName?: string
+  selector?: string
+}
 
 let isPickerActive = false
 let highlightedElement: Element | null = null
@@ -10,14 +28,105 @@ let pickerOverlay: HTMLElement | null = null
 
 const originalStyles = new Map<Element, { outline: string; outlineOffset: string; backgroundColor: string }>()
 
+// Inline DOM utilities
+function getDeepText(element: Element | null): string {
+  if (!element) return '[No Element]'
+
+  const text = element.textContent?.trim()
+  if (text && text.length > 0) {
+    return text.length > 500 ? text.substring(0, 500) + '...' : text
+  }
+
+  if ((element as HTMLInputElement).value) {
+    return (element as HTMLInputElement).value.trim()
+  }
+
+  if ((element as HTMLImageElement).alt) {
+    return (element as HTMLImageElement).alt.trim()
+  }
+
+  if (element.getAttribute('title')) {
+    return element.getAttribute('title')!.trim()
+  }
+
+  if ((element as HTMLInputElement).placeholder) {
+    return `[Placeholder: ${(element as HTMLInputElement).placeholder}]`
+  }
+
+  return '[No Content]'
+}
+
+function generateSelector(element: Element): string {
+  // Try ID first
+  if (element.id) {
+    return `#${CSS.escape(element.id)}`
+  }
+
+  // Try unique class combination
+  if (element.className && typeof element.className === 'string') {
+    const classes = element.className.trim().split(/\s+/).filter((c) => c)
+    if (classes.length > 0) {
+      const classSelector = '.' + classes.map((c) => CSS.escape(c)).join('.')
+      if (document.querySelectorAll(classSelector).length === 1) {
+        return classSelector
+      }
+    }
+  }
+
+  // Build path from root
+  const path: string[] = []
+  let current: Element | null = element
+
+  while (current && current !== document.body && current !== document.documentElement) {
+    let selector = current.tagName.toLowerCase()
+
+    if (current.id) {
+      selector = `#${CSS.escape(current.id)}`
+      path.unshift(selector)
+      break
+    }
+
+    const parent: Element | null = current.parentElement
+    if (parent) {
+      const children = parent.children
+      const siblings: Element[] = []
+      for (let i = 0; i < children.length; i++) {
+        if (children[i].tagName === current.tagName) {
+          siblings.push(children[i])
+        }
+      }
+      if (siblings.length > 1) {
+        const index = siblings.indexOf(current) + 1
+        selector += `:nth-of-type(${index})`
+      }
+    }
+
+    path.unshift(selector)
+    current = parent
+  }
+
+  return path.join(' > ')
+}
+
+function getElementValue(selector: string): string {
+  try {
+    const element = document.querySelector(selector)
+    return getDeepText(element)
+  } catch {
+    return '[Invalid Selector]'
+  }
+}
+
 // Listen for messages
 chrome.runtime.onMessage.addListener((message: MessageType, _sender, sendResponse) => {
+  console.log('Content script received:', message.type)
+
   switch (message.type) {
     case 'PING':
       sendResponse({ success: true, loaded: true })
       break
     case 'START_PICKER':
-      startPicker(message.variableName)
+      startPicker(message.variableName!)
       sendResponse({ success: true })
       break
     case 'STOP_PICKER':
@@ -33,7 +142,9 @@ chrome.runtime.onMessage.addListener((message: MessageType, _sender, sendRespons
       }
       break
     case 'GET_ELEMENT_VALUE':
-      sendResponse({ value: getElementValue(message.selector) })
+      const value = getElementValue(message.selector!)
+      console.log('GET_ELEMENT_VALUE:', message.selector, '->', value)
+      sendResponse({ value })
       break
     case 'GET_PAGE_INFO':
       sendResponse({ url: window.location.href, title: document.title })
@@ -210,6 +321,11 @@ function confirmSelection(element: Element) {
   const selector = generateSelector(element)
   const text = getDeepText(element)
 
+  console.log('DOM Syringe: Confirming selection')
+  console.log('  Selector:', selector)
+  console.log('  Text:', text.substring(0, 100))
+  console.log('  Variable:', currentVariableName)
+
   const selection: LastSelection = {
     variableName: currentVariableName!,
     selector,
@@ -223,6 +339,10 @@ function confirmSelection(element: Element) {
   chrome.runtime.sendMessage({
     type: 'ELEMENT_SELECTED',
     ...selection,
+  }).then(() => {
+    console.log('DOM Syringe: Message sent successfully')
+  }).catch((err) => {
+    console.error('DOM Syringe: Failed to send message', err)
   })
 
   stopPicker(false)
