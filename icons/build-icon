@@ -1,0 +1,32 @@
+#! /usr/bin/env php
+<?php
+
+$svgFile = __DIR__ . '/icon-base.svg';
+$sizes = [16, 32, 48, 128];
+
+if (!file_exists($svgFile)) {
+    die("SVG file not found\n");
+}
+
+foreach ($sizes as $size) {
+    $imagick = new Imagick();
+
+    // Improve SVG rendering quality
+    $imagick->setBackgroundColor(new ImagickPixel('transparent'));
+    $imagick->setResolution(300, 300);
+
+    // Read SVG
+    $imagick->readImage($svgFile);
+
+    // Resize
+    $imagick->resizeImage($size, $size, Imagick::FILTER_LANCZOS, 1);
+
+    // Output PNG
+    $imagick->setImageFormat('png');
+    $imagick->writeImage(__DIR__ . "/icon{$size}.png");
+
+    $imagick->clear();
+    $imagick->destroy();
+
+    echo "Generated icon{$size}.png\n";
+}

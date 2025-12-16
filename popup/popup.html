@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DOM Syringe</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <span class="logo-icon">💉</span>
+        <h1>DOM Syringe</h1>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+      <!-- View: Copy Items List -->
+      <section id="list-view" class="view active">
+        <div class="section-header">
+          <h2>Copy Items</h2>
+          <button id="new-item-btn" class="btn btn-primary btn-sm">
+            <span>+</span> New
+          </button>
+        </div>
+        <div id="items-list" class="items-list">
+          <!-- Items will be rendered here -->
+        </div>
+        <div id="empty-state" class="empty-state">
+          <div class="empty-icon">📋</div>
+          <p>No copy items yet</p>
+          <p class="empty-hint">Create your first copy item to get started</p>
+        </div>
+      </section>
+
+      <!-- View: Create/Edit Item -->
+      <section id="editor-view" class="view">
+        <div class="section-header">
+          <button id="back-btn" class="btn btn-ghost btn-sm">← Back</button>
+          <h2 id="editor-title">New Copy Item</h2>
+        </div>
+
+        <!-- Item Name -->
+        <div class="form-group">
+          <label for="item-name">Name</label>
+          <input type="text" id="item-name" placeholder="e.g., Blog Summary" />
+        </div>
+
+        <!-- Variables Section -->
+        <div class="form-group">
+          <label>
+            Variables
+            <button id="add-variable-btn" class="btn btn-ghost btn-xs">+ Add</button>
+          </label>
+          <div id="variables-list" class="variables-list">
+            <!-- Variables will be rendered here -->
+          </div>
+          <div id="variables-empty" class="variables-empty">
+            <p>No variables yet. Click "Add" to pick elements from the page.</p>
+          </div>
+        </div>
+
+        <!-- Template Editor -->
+        <div class="form-group">
+          <label for="template-editor">Template</label>
+          <div class="template-help">
+            <span class="help-item">Use <code>{varName}</code> for variables</span>
+            <span class="help-item"><code>[text](url)</code> for links</span>
+          </div>
+          <div class="editor-wrapper">
+            <textarea id="template-editor" rows="5" placeholder="Example:
+# {title}
+
+{description}
+
+[Read More]({CURRENT_PAGE_URL})"></textarea>
+            <div id="variable-suggestions" class="variable-suggestions"></div>
+          </div>
+        </div>
+
+        <!-- Preview -->
+        <div class="form-group">
+          <label>Preview</label>
+          <div id="template-preview" class="template-preview">
+            <em>Preview will appear here...</em>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="form-actions">
+          <button id="delete-item-btn" class="btn btn-danger">Delete</button>
+          <button id="save-item-btn" class="btn btn-primary">Save</button>
+        </div>
+      </section>
+    </main>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Built-in Variables Info -->
+    <footer class="footer">
+      <div class="builtin-vars">
+        <span class="builtin-label">Built-in:</span>
+        <code>{CURRENT_PAGE_URL}</code>
+        <code>{CURRENT_PAGE_TITLE}</code>
+      </div>
+    </footer>
+  </div>
+
+  <script src="popup.js" type="module"></script>
+</body>
+</html>
+
