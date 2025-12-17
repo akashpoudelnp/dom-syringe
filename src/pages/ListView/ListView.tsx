@@ -10,13 +10,15 @@ export function ListView() {
       <div className={styles.header}>
         <h2>Copy Items</h2>
         <Button variant="primary" size="sm" icon="plus" onClick={createItem}>
-          New
+          New Item
         </Button>
       </div>
 
       {copyItems.length === 0 ? (
         <div className={styles.empty}>
-          <i className="ti ti-clipboard-list" />
+          <div className={styles.emptyIcon}>
+            <i className="ti ti-clipboard-list" />
+          </div>
           <p>No copy items yet</p>
           <p className={styles.hint}>Create your first copy item to get started</p>
         </div>
@@ -28,9 +30,13 @@ export function ListView() {
               className={styles.card}
               onClick={() => editItem(index)}
             >
+              <div className={styles.cardIcon}>
+                <i className="ti ti-file-text" />
+              </div>
               <div className={styles.cardInfo}>
                 <div className={styles.cardName}>{item.name || 'Untitled'}</div>
                 <div className={styles.cardMeta}>
+                  <i className="ti ti-variable" />
                   {Object.keys(item.variables).length} variable
                   {Object.keys(item.variables).length !== 1 ? 's' : ''}
                 </div>

@@ -209,34 +209,64 @@ function createOverlay() {
         right: 0;
         z-index: 2147483647;
         pointer-events: none;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        animation: ds-slide-down 0.2s ease-out;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        animation: ds-slide-down 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       }
       .ds-picker-header {
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 12px;
-        padding: 12px 20px;
-        background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
-        color: white;
-        font-size: 14px;
-        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+        gap: 16px;
+        padding: 14px 24px;
+        background: linear-gradient(135deg, rgba(12, 12, 14, 0.95) 0%, rgba(26, 26, 30, 0.95) 100%);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        color: #F4F4F5;
+        font-size: 13px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(139, 92, 246, 0.3), 0 0 40px rgba(139, 92, 246, 0.15);
+        border-bottom: 1px solid rgba(139, 92, 246, 0.3);
+      }
+      .ds-picker-icon {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #8B5CF6 0%, #A78BFA 100%);
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(139, 92, 246, 0.4);
       }
       .ds-picker-header svg { flex-shrink: 0; }
-      .ds-picker-title { font-weight: 500; }
-      .ds-picker-title strong { color: #FDE68A; }
+      .ds-picker-title { 
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .ds-picker-title strong { 
+        color: #8B5CF6;
+        background: rgba(139, 92, 246, 0.15);
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-weight: 600;
+      }
       .ds-picker-hint {
-        opacity: 0.85;
+        color: #A1A1AA;
         font-size: 12px;
-        padding-left: 12px;
-        border-left: 1px solid rgba(255, 255, 255, 0.3);
+        padding-left: 16px;
+        border-left: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        gap: 10px;
       }
       .ds-picker-hint strong {
-        background: rgba(255,255,255,0.2);
-        padding: 2px 6px;
-        border-radius: 4px;
+        background: rgba(255, 255, 255, 0.08);
+        padding: 4px 8px;
+        border-radius: 5px;
         font-weight: 500;
+        color: #F4F4F5;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        font-size: 11px;
       }
       @keyframes ds-slide-down {
         from { transform: translateY(-100%); opacity: 0; }
@@ -254,12 +284,14 @@ function createOverlay() {
 
   pickerOverlay.innerHTML = `
     <div class="ds-picker-header">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M18 2l4 4-2.5 2.5L17 6l-2.5 2.5L6 17l-4 4"/>
-        <path d="M9.5 9.5L3 16"/>
-      </svg>
+      <div class="ds-picker-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 2l4 4-2.5 2.5L17 6l-2.5 2.5L6 17l-4 4"/>
+          <path d="M9.5 9.5L3 16"/>
+        </svg>
+      </div>
       <span class="ds-picker-title">Selecting: <strong>${currentVariableName || 'element'}</strong></span>
-      <span class="ds-picker-hint">Hover & press <strong>${confirmKey}</strong> to select · <strong>Esc</strong> to cancel</span>
+      <span class="ds-picker-hint">Hover & press <strong>${confirmKey}</strong> to select <span style="color: #71717A">·</span> <strong>Esc</strong> to cancel</span>
     </div>
   `
   document.body.appendChild(pickerOverlay)
@@ -356,9 +388,9 @@ function highlightElement(element: Element) {
     backgroundColor: el.style.backgroundColor,
   })
 
-  el.style.outline = '2px solid #4F46E5'
+  el.style.outline = '2px solid #8B5CF6'
   el.style.outlineOffset = '2px'
-  el.style.backgroundColor = 'rgba(79, 70, 229, 0.1)'
+  el.style.backgroundColor = 'rgba(139, 92, 246, 0.1)'
 
   highlightedElement = element
 }
