@@ -1,73 +1,150 @@
-# React + TypeScript + Vite
+<div align="center">
+  <img src="https://github.com/akashpoudelnp/dom-syringe/blob/main/public/icons/icon128.png?raw=true" alt="DOM Syringe Logo" width="128" height="128">
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# DOM Syringe
 
-Currently, two official plugins are available:
+**Extract, template, and copy DOM content with a single click**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+[![Chrome Extension](https://img.shields.io/badge/Chrome-Extension-4285F4?logo=googlechrome&logoColor=white)](https://chrome.google.com/webstore)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Version](https://img.shields.io/badge/version-0.3.0-blue.svg)](package.json)
+</div>
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## ✨ Features
 
-## Expanding the ESLint configuration
+- 🎯 **Visual Element Picker** - Point and click to select any text element on a webpage
+- 📝 **Template System** - Create reusable templates with variables and Markdown links
+- 📋 **One-Click Copy** - Access your copy items from the right-click context menu
+- 🔗 **Rich Text Support** - Copies as both HTML (for rich editors) and plain text
+- 💾 **Persistent Storage** - Your copy items sync across browser sessions
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🚀 Quick Start
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Installation
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/akashpoudelnp/dom-syringe.git
+   cd dom-syringe
+   ```
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Build the extension:
+   ```bash
+   npm run build
+   ```
+
+4. Load in Chrome:
+    - Navigate to `chrome://extensions`
+    - Enable **Developer mode** (top right)
+    - Click **Load unpacked**
+    - Select the `dist` folder
+
+## 📖 How It Works
+
+### 1. Create a Copy Item
+
+Click the extension icon and create a new copy item with a name and template.
+
+### 2. Add Variables
+
+Use the visual picker to select elements from any webpage. Each variable maps to a CSS selector.
+
+```
+Template: Check out [{title}]({url}) by {author}
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 3. Copy with Context Menu
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Right-click anywhere on a page and select your copy item from the **DOM Syringe** menu. The template is filled with live
+DOM content and copied to your clipboard.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## 📝 Template Syntax
+
+| Syntax        | Description            | Example                                                              |
+|---------------|------------------------|----------------------------------------------------------------------|
+| `{varName}`   | Variable interpolation | `{title}` → "My Article"                                             |
+| `[text](url)` | Markdown link          | `[Click here](https://example.com)` → `<a href="...">Click here</a>` |
+
+### Built-in Variables
+
+| Variable               | Description        |
+|------------------------|--------------------|
+| `{CURRENT_PAGE_URL}`   | Current page URL   |
+| `{CURRENT_PAGE_TITLE}` | Current page title |
+
+## 🎮 Keyboard Shortcuts
+
+| Shortcut               | Action                    |
+|------------------------|---------------------------|
+| `Cmd/Ctrl + Shift + E` | Confirm element selection |
+| `Esc`                  | Cancel picker mode        |
+
+## 🛠️ Development
+
+```bash
+# Start development server with hot reload
+npm run dev
+
+# Build for production
+npm run build
+
+# Lint code
+npm run lint
 ```
+
+## 🏗️ Tech Stack
+
+- **React 18** - UI framework
+- **TypeScript** - Type safety
+- **Vite** - Build tool
+- **CRXJS** - Chrome extension Vite plugin
+- **Zustand** - State management
+- **CSS Modules** - Scoped styling
+
+## 📁 Project Structure
+
+```
+dom-syringe/
+├── src/
+│   ├── components/        # Reusable UI components
+│   ├── pages/             # View components
+│   ├── hooks/             # React hooks (Zustand store)
+│   ├── lib/               # Utilities & types
+│   ├── background/        # Service worker
+│   └── content/           # Content script & picker
+├── public/
+│   └── icons/             # Extension icons
+└── manifest.json          # Chrome Extension Manifest V3
+```
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- [Tabler Icons](https://tabler-icons.io/) for the icon set
+- [CRXJS](https://crxjs.dev/) for the amazing Vite plugin
+
+---
+
+<div align="center">
+  Made with ❤️ by <a href="https://github.com/akashpoudelnp">Akash Poudel</a>
+</div>
