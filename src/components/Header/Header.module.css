@@ -40,17 +40,6 @@
 .logoIcon {
   width: 38px;
   height: 38px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, var(--primary) 0%, #A78BFA 100%);
-  border-radius: var(--radius);
-  box-shadow: 0 4px 12px var(--primary-glow);
-}
-
-.logo i {
-  font-size: 20px;
-  color: white;
 }
 
 .logoText {

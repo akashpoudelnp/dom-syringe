@@ -108,21 +108,3 @@ npm run build
 # 4. Select the `dist` folder
 ```
 
-## Changelog
-
-### v0.2.0 - December 2024 (React Rewrite)
-- Complete rewrite using React + TypeScript
-- Vite build with CRXJS for hot reload
-- Zustand for state management
-- CSS Modules for scoped styling
-- Tabler Icons (webfont) instead of emojis
-- Shared lib folder for utilities
-- Cleaner component architecture
-- Better type safety throughout
-
-### v1.0.x - December 2024 (Vanilla JS)
-- Initial MVP with vanilla JavaScript
-- Basic picker, editor, context menu
-- Markdown link support
-- Toast notifications
-

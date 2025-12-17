@@ -124,8 +124,10 @@ function extractAndCopy(copyItem: CopyItem) {
   function stripTags(html: string): string {
     const div = document.createElement('div')
     div.innerHTML = html
+    // For links, just keep the text, remove the URL entirely
     div.querySelectorAll('a').forEach((a) => {
-      a.textContent = `${a.textContent} (${a.href})`
+      const text = document.createTextNode(a.textContent || '')
+      a.replaceWith(text)
     })
     div.querySelectorAll('br').forEach((br) => br.replaceWith('\n'))
     return div.textContent || div.innerText || ''
@@ -137,21 +139,23 @@ function extractAndCopy(copyItem: CopyItem) {
       position: fixed;
       top: 20px;
       right: 20px;
-      background: #059669;
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.95) 0%, rgba(5, 150, 105, 0.95) 100%);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       color: white;
-      padding: 12px 20px;
-      border-radius: 8px;
-      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-      font-size: 14px;
+      padding: 14px 20px;
+      border-radius: 10px;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 13px;
       font-weight: 500;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.3), 0 0 20px rgba(16, 185, 129, 0.3);
       z-index: 2147483647;
       display: flex;
       align-items: center;
-      gap: 8px;
-      animation: dsSlideIn 0.3s ease;
+      gap: 10px;
+      animation: dsSlideIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     `
-    el.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Copied!'
+    el.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Copied to clipboard'
 
     const style = document.createElement('style')
     style.textContent = `@keyframes dsSlideIn { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }`
@@ -159,10 +163,10 @@ function extractAndCopy(copyItem: CopyItem) {
     document.body.appendChild(el)
 
     setTimeout(() => {
-      el.style.transition = 'all 0.3s ease'
+      el.style.transition = 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)'
       el.style.opacity = '0'
       el.style.transform = 'translateX(100px)'
-      setTimeout(() => { el.remove(); style.remove() }, 300)
+      setTimeout(() => { el.remove(); style.remove() }, 250)
     }, 2000)
   }
 
