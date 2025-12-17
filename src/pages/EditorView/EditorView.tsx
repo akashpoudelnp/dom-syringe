@@ -242,29 +242,16 @@ export function EditorView() {
             </div>
           ) : (
             <div className={styles.varList}>
-              {Object.entries(currentItem.variables).map(([name, selector]) => (
-                <div key={name} className={styles.varItem}>
-                  <div className={styles.varName}>
-                    <span>{'{'}</span>
-                    <input
-                      type="text"
-                      value={name}
-                      onChange={(e) => updateVariable(name, e.target.value)}
-                    />
-                    <span>{'}'}</span>
-                  </div>
-                  <div className={styles.varValue}>
-                    {variableValues[name] || (selector ? 'Loading...' : 'Not set')}
-                  </div>
-                  <div className={styles.varActions}>
-                    <button onClick={() => handleRepick(name)} title="Re-pick">
-                      <i className="ti ti-focus-2" />
-                    </button>
-                    <button onClick={() => removeVariable(name)} title="Delete">
-                      <i className="ti ti-x" />
-                    </button>
-                  </div>
-                </div>
+              {Object.entries(currentItem.variables).map(([name, selector], index) => (
+                <VariableItem
+                  key={`var-${index}`}
+                  name={name}
+                  selector={selector}
+                  value={variableValues[name]}
+                  onRename={(newName) => updateVariable(name, newName)}
+                  onRepick={() => handleRepick(name)}
+                  onRemove={() => removeVariable(name)}
+                />
               ))}
             </div>
           )}
@@ -381,6 +368,78 @@ function Preview({
       className={styles.preview}
       dangerouslySetInnerHTML={{ __html: result }}
     />
+  )
+}
+
+// Variable item component with local state for editing name
+function VariableItem({
+  name,
+  selector,
+  value,
+  onRename,
+  onRepick,
+  onRemove,
+}: {
+  name: string
+  selector: string
+  value?: string
+  onRename: (newName: string) => void
+  onRepick: () => void
+  onRemove: () => void
+}) {
+  const [localName, setLocalName] = useState(name)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  // Sync local state when prop changes (e.g., after save/load)
+  useEffect(() => {
+    setLocalName(name)
+  }, [name])
+
+  const handleBlur = () => {
+    const trimmed = localName.trim()
+    if (trimmed && trimmed !== name) {
+      onRename(trimmed)
+    } else {
+      // Reset to original if empty or unchanged
+      setLocalName(name)
+    }
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      inputRef.current?.blur()
+    } else if (e.key === 'Escape') {
+      setLocalName(name)
+      inputRef.current?.blur()
+    }
+  }
+
+  return (
+    <div className={styles.varItem}>
+      <div className={styles.varName}>
+        <span>{'{'}</span>
+        <input
+          ref={inputRef}
+          type="text"
+          value={localName}
+          onChange={(e) => setLocalName(e.target.value)}
+          onBlur={handleBlur}
+          onKeyDown={handleKeyDown}
+        />
+        <span>{'}'}</span>
+      </div>
+      <div className={styles.varValue}>
+        {value || (selector ? 'Loading...' : 'Not set')}
+      </div>
+      <div className={styles.varActions}>
+        <button onClick={onRepick} title="Re-pick">
+          <i className="ti ti-focus-2" />
+        </button>
+        <button onClick={onRemove} title="Delete">
+          <i className="ti ti-x" />
+        </button>
+      </div>
+    </div>
   )
 }
 
